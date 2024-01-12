@@ -1,8 +1,7 @@
 'use strict';
 
 const { home } = require('./funcs/home');
-const { redirect } = require('./funcs/redirect');
-const { shorten } = require('./funcs/shorten');
+const { redirectUrl, shortenUrl, deleteUrl, listAllUrls, listAllProductNames } = require('./funcs/action');
 const { res_404 } = require('./funcs/response');
 
 module.exports.handler = async (event) => {
@@ -14,15 +13,18 @@ module.exports.handler = async (event) => {
         case 'GET /url-shortener':
             return home();
         case 'GET /s/{proxy+}':
-            return await redirect(event.pathParameters.proxy, event.headers['accept-language']);
+            return await redirectUrl(event.pathParameters.proxy, event.headers['accept-language']);
         case 'POST /url-shortener':
-            return await shorten('policies', 'def', {
+            return await shortenUrl('policies', 'def', {
                 'US': 'https://www.youtube.com',
                 'FR': 'https://www.bilibili.com'
             });
         case 'DELETE /url-shortener':
-        case 'PUT /url-shortener':
+            return await deleteUrl('policies', 'def');
         case 'GET /url-shortener/all':
+            return await listAllUrls('policies', 'def');
+        case 'GET /product-name/all':
+            return listAllProductNames();
         default:
             return res_404();
     }

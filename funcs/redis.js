@@ -17,14 +17,14 @@ redisClient.on('connect', () => {
 // keep the connection open
 redisClient.connect();
 
-async function saveAllHashFields(hashKey, urlMapping) {
-    console.info('saveAllHashFields, parameters{hashKey:' + hashKey + ', urlMapping:' + urlMapping + '}');
+async function saveHashFields(hashKey, hashFields) {
+    console.info('saveHashFields, parameters{hashKey:' + hashKey + ', urlMapping:' + hashFields + '}');
     try {
-        let res = await redisClient.hSet(hashKey, urlMapping);
-        console.info('saveAllHashFields, res:' + res); 
+        let res = await redisClient.hSet(hashKey, hashFields);
+        console.info('saveHashFields, res:' + res); 
         return res ? true: false;
     } catch (err) {
-        console.error('saveAllHashFields, err:' + err);
+        console.error('saveHashFields, err:' + err);
         return false;
     }
 }
@@ -41,26 +41,76 @@ async function getHashField(hashKey, fieldToRead) {
     }
 }
 
-async function checkHashFieldExists(hashKey, fieldToCheck) {
-    console.info('checkHashFieldExists, parameters{hashKey:' + hashKey + ', fieldToCheck:' + fieldToCheck + '}');
+async function hashFieldExists(hashKey, fieldToCheck) {
+    console.info('hashFieldExists, parameters{hashKey:' + hashKey + ', fieldToCheck:' + fieldToCheck + '}');
     try {
         let res = await redisClient.hExists(hashKey, fieldToCheck);
-        console.info("checkHashFieldExists, res:" + res);
+        console.info("hashFieldExists, res:" + res);
         return res ? true: false;
     } catch (err) {
-        console.err('checkHashFieldExists, err:' + err);
+        console.err('hashFieldExists, err:' + err);
     }
 }
 
-async function getAllHashFields(hashKey) {
-    console.info('getAllHashFields, parameters{hashKey:' + hashKey + '}');
+async function getHashFields(hashKey) {
+    console.info('getHashFields, parameters{hashKey:' + hashKey + '}');
     try {
         let res = await redisClient.hGetAll(hashKey);
-        console.info("getAllHashFields, res:" + res);
-        return res ? true: false;
+        console.info("getHashFields, res:" + JSON.stringify(res));
+        return res;
     } catch (err) {
-        console.error('getAllHashFields, err:' + err);
+        console.error('getHashFields, err:' + err);
     }
 }
 
-module.exports = { saveAllHashFields, getHashField, checkHashFieldExists, getAllHashFields };
+async function deleteHash(hashKey) {
+    console.info('deleteHash, parameters{hashKey:' + hashKey + '}');
+    try {
+        let res = await redisClient.del(hashKey);
+        console.info('deleteHash, res:' + res);
+        return res ? true: false;
+    } catch (err) {
+        console.error('deleteHash, err:' + err);
+        return false;
+    }
+}
+
+async function deleteHashField(hashKey, fieldToDelete) {
+    console.info('deleteHashField, parameters{hashKey:' + hashKey + ', fieldToDelete:' + fieldToDelete + '}');
+    try {
+        let res = await redisClient.hDel(hashKey, fieldToDelete);
+        console.info('deleteHashField, res:' + res);
+        return res ? true: false;
+    } catch (err) {
+        console.error('deleteHashField, err:' + err);
+        return false;
+    }
+}
+
+async function getAllKeys(keyword) {
+    console.info('getAllKeys, parameters{keyword:' + keyword + '}');
+    try {
+        let res = await redisClient.scanIterator({
+            TYPE: 'hash',
+            MATCH: keyword + '*',
+            COUNT: 100
+        });
+        console.info('getAllKeys, res:' + res);
+        return res;
+    } catch (err) {
+        console.error('getAllKeys, err:' + err);
+    }
+}
+
+async function getType(key) {
+    console.info('getType, parameters{key:' + key + '}');
+    try {
+        let res = await redisClient.type(key);
+        console.info('getType, res:' + res);
+        return res;
+    } catch (err) {
+        console.error('getType, err:' + err);
+    }
+}
+
+module.exports = { saveHashFields, getHashField, hashFieldExists, getHashFields, deleteHash, deleteHashField, getAllKeys, getType };

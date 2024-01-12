@@ -50,4 +50,11 @@ function res_language_not_supported() {
     };
 }
 
-module.exports = { json_success, json_fail, res_redirect, res_404, res_bad_request, res_language_not_supported };
+function res_500(err) {
+    return {
+        statusCode: 500,
+        body: 'Internal Server Error' + err
+    };
+}
+
+module.exports = { json_success, json_fail, res_redirect, res_404, res_500, res_bad_request, res_language_not_supported };
