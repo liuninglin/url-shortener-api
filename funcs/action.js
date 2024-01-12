@@ -1,7 +1,9 @@
 const {saveShortUrl, getOriginalUrl, deleteShortUrl, getAllOriginalUrls} = require('./shortUrl');
 const { LanguageNotSupportError, CountryNotSupportError, NotExistError } = require('./exception');
-const { json_success, json_fail, res_redirect, res_404, res_500, res_language_not_supported } = require('./response');
+const { json_success, json_fail, res_redirect, res_404, res_500, res_language_not_supported, res_already_exist } = require('./response');
 const { getAllProductNames } = require('./product');
+const { getUrlKey } = require('./urlKey');
+const { keyExists } = require('./redis');
 
 async function redirectUrl(shortPath, languageAndCountryCode) {
     try {
@@ -55,4 +57,16 @@ function listAllProductNames() {
     return getAllProductNames();
 }
 
-module.exports = { redirectUrl, shortenUrl, deleteUrl, listAllUrls, listAllProductNames };
+async function generateUrlKey(productName, customUrlKey) {
+    if (customUrlKey) {
+        if (await keyExists(productName + '/' + customUrlKey)) {
+            return res_already_exist();
+        }
+        return json_success(customUrlKey);
+    }
+
+    let urlKey = await getUrlKey(productName);
+    return json_success(urlKey);
+}
+
+module.exports = { redirectUrl, shortenUrl, deleteUrl, listAllUrls, listAllProductNames, generateUrlKey };

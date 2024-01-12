@@ -57,4 +57,11 @@ function res_500(err) {
     };
 }
 
-module.exports = { json_success, json_fail, res_redirect, res_404, res_500, res_bad_request, res_language_not_supported };
+function res_already_exist() {
+    return {
+        statusCode: 400,
+        body: 'Data already exist'
+    };
+}
+
+module.exports = { json_success, json_fail, res_redirect, res_404, res_500, res_bad_request, res_language_not_supported, res_already_exist };

@@ -19,4 +19,11 @@ class NotExistError extends Error {
     }
 }
 
-module.exports = { LanguageNotSupportError, CountryNotSupportError, NotExistError };
+class AlreadyExistError extends Error {
+    constructor(args){
+        super(args);
+        this.name = "AlreadyExistError"
+    }
+}
+
+module.exports = { LanguageNotSupportError, CountryNotSupportError, NotExistError, AlreadyExistError };

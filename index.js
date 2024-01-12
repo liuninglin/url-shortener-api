@@ -1,13 +1,14 @@
 'use strict';
 
 const { home } = require('./funcs/home');
-const { redirectUrl, shortenUrl, deleteUrl, listAllUrls, listAllProductNames } = require('./funcs/action');
+const { redirectUrl, shortenUrl, deleteUrl, listAllUrls, listAllProductNames, generateUrlKey } = require('./funcs/action');
 const { res_404 } = require('./funcs/response');
 
 module.exports.handler = async (event) => {
     console.info('event json:\n' + JSON.stringify(event));
 
     let routeKey = event.requestContext.routeKey;
+    let productName = 'policies';
 
     switch (routeKey) {
         case 'GET /url-shortener':
@@ -25,6 +26,8 @@ module.exports.handler = async (event) => {
             return await listAllUrls('policies', 'def');
         case 'GET /product-name/all':
             return listAllProductNames();
+        case 'POST /url-key':
+            return await generateUrlKey(productName, undefined); 
         default:
             return res_404();
     }

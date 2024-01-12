@@ -52,6 +52,17 @@ async function hashFieldExists(hashKey, fieldToCheck) {
     }
 }
 
+async function keyExists(key) {
+    console.info('keyExists, parameters{key:' + key + '}');
+    try {
+        let res = await redisClient.exists(key);
+        console.info("keyExists, res:" + res);
+        return res ? true: false;
+    } catch (err) {
+        console.err('keyExists, err:' + err);
+    }
+}
+
 async function getHashFields(hashKey) {
     console.info('getHashFields, parameters{hashKey:' + hashKey + '}');
     try {
@@ -113,4 +124,4 @@ async function getType(key) {
     }
 }
 
-module.exports = { saveHashFields, getHashField, hashFieldExists, getHashFields, deleteHash, deleteHashField, getAllKeys, getType };
+module.exports = { saveHashFields, getHashField, hashFieldExists, getHashFields, deleteHash, deleteHashField, getAllKeys, getType, keyExists };

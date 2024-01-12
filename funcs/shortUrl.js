@@ -1,7 +1,7 @@
 const { saveHashFields, getHashField, hashFieldExists, getHashFields, deleteHash, getAllKeys } = require('./redis');
 const { LanguageNotSupportError, CountryNotSupportError, NotExistError } = require('./exception');
 const { getAllProductNames } = require('./product');
-// define an array of supported country codes
+
 const supportedCountryCodes = ['US', 'GB', 'FR', 'CA', 'AU'];
 const supportedLanguageCodes = ['en', 'fr', ''];
 
